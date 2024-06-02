@@ -1,0 +1,33 @@
+app = 'suinfra-proxy'
+primary_region = 'nrt'
+
+[build]
+
+[http_service]
+  internal_port = 8080
+  force_https = false
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 200
+    hard_limit = 300
+  [http_service.http_options.response]
+    pristine = true
+  [http_service.http_options.response.headers]
+    X-Server = "suinfra"
+    
+
+[[http_service.checks]]
+  grace_period = "10s"
+  interval = "30s"
+  method = "GET"
+  timeout = "3s"
+  path = "/ping"
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1
